@@ -1,0 +1,189 @@
+<HTML>
+
+<TITLE>
+				MODEST/MANYBODY
+</TITLE>
+<BODY bgcolor=#f7dfb2>
+
+<center>
+
+<h1>Welcome to MODEST/MANYBODY</h1>
+<tt><font size=+3>http://www.manybody.org</font></tt>
+
+</center>
+<br><br>
+
+The aim of this web site is to present a convenient entry point for
+various activities related to simulations of stellar systems.  These
+include <a href=modest>MODEST</a> (MOdeling DEnse STellar systems), a
+collaboration between groups working in stellar dynamics, stellar
+evolution, and stellar hydrodynamics, and the <a
+href=manybody>MANYBODY</a> collaboration for stellar dynamics
+software, hardware, and visualization.
+
+<br><br>
+
+<table cellpadding=10>
+
+<!-- First row: MODEST header -->
+
+<tr><td></td>
+    <td align=center>
+        <font size=+2><b><a href=modest>MODEST</a>&nbsp;</b></font>
+    </td>
+<td></td></tr>
+
+<!-- Second row: MODEST links, text, image -->
+
+<tr>
+
+<td valign=top>
+  <table>
+
+    <tr><td width=1200>
+	<a href=modest>MODEST home</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg1.html>WG1: star formation</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg2.html>WG2: stellar evolution</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg3.html>WG3: stellar dynamics</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg4.html>WG4: stellar collisions</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg5.html>WG5: S. O. S.</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg6.html>WG6: data structures</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg7.html>WG7: validation</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg8.html>WG8: literature</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg9.html>WG9: observations</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=modest/WG/wg10.html>WG10: outreach</a>
+    </td></tr>
+
+  </table>
+</td>
+
+<td valign=top>
+
+MODEST stands for MOdeling DEnse STellar systems, and is a loosely
+knit collaboration between various groups working in stellar dynamics,
+stellar evolution, and stellar hydrodynamics.  Our aim is to provide a
+software framework for large scale simulations of dense stellar
+systems, in which existing codes for dynamics, stellar evolution, and
+hydrodynamics can be easily coupled.  The web site presents up-to-date
+information about our efforts to combine stellar evolution and
+hydrodynamic codes directly with N-body simulations, and gives
+pointers to various projects in progress.
+
+<br><br> Links to the MODEST home page and working groups appear at
+left.
+
+</td>
+
+<td valign=top width=220>
+    <a href=modest><img align=right width=175
+    src=modest/modest_CV.gif></a>
+</td>
+
+</tr>
+
+<!-- Third row: blank -->
+
+<tr><td></td><td></td><td></td></tr>
+
+<!-- Fourth row: MANYBODY header -->
+
+<tr><td></td>
+    <td align=center>
+        <font size=+2><b><a href=manybody>MANYBODY</a>&nbsp;</b></font>
+    </td>
+<td></td></tr>
+
+<!-- Fifth row: MANYBODY links, text, image -->
+
+<tr>
+
+<td valign=top>
+  <table>
+
+    <tr><td>
+	<a href=manybody>MANYBODY home</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/nemo.html>Nemo</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/starlab.html>Starlab</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/grape.html>GRAPE</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/partiview.html>Partiview</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/codes.html>Codes</a>
+    </td></tr>
+
+    <tr><td>
+	<a href=manybody/archives.html>Archives</a>
+    </td></tr>
+
+  </table>
+</td>
+
+<td valign=top>
+
+The MANYBODY web site offers the open source software environments
+NEMO and STARLAB, for setting up, running, and analyzing large-scale
+simulations in stellar dynamics, along with the PARTIVIEW
+visualization package.  We also provide links to the GRAPE
+(GRAvitational PipelinE) project, creating special purpose hardware
+for stellar dynamics, at speeds approaching 100 Teraflops.
+
+</td>
+
+<td width=220 valign=top>
+    <a href=manybody><img align=right height=150
+    src=manybody/M80.jpg></a>
+</td>
+
+</tr>
+</table>
+
+<BR><FONT SIZE=-2>Page last modified:
+<!--#echo var="LAST_MODIFIED" -->.
+<!--#config timefmt="%d-%h-%Y" -->
+</FONT>
+
+</body>
+</HTML>

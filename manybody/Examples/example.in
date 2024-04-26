@@ -1,0 +1,18 @@
+2.0   1.0    4000  0.6  12000 2000    2.35    0.1    100.00   31111
+
+M     m      a     e    t_end n       x        m_     m+       seed
+Columns mean:
+M:      Primary mass [Msun]
+m:      Secondary mass [Msun]
+a:      Semi-major axis [Rsun]
+e:      eccentricity 
+t_end:  end time [Myr]
+n:      density [stars/pc^3]
+x:      Initial mass function exponent [Salpeter = 2.35]
+m_:     lower mass to the IMF [Msun]
+m_:     maximum mass to the IMF [Msun]
+seed    random seed
+
+
+
+

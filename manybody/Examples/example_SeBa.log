@@ -1,0 +1,59 @@
+
+0a main_sequence_to_hertzsprung_gap_at_time = 801.07 Myr (old mass = 2)
+binary companion: main_sequence
+parent: 0
+
+0a hertzsprung_gap_to_sub_giant_at_time = 819.80 Myr (old mass = 1.98)
+binary companion: main_sequence
+parent: 0
+
+0a sub_giant_to_horizontal_branch_at_time = 938.44 Myr (old mass = 1.91333)
+binary companion: main_sequence
+parent: 0
+
+0a horizontal_branch_to_super_giant_at_time = 1022.51 Myr (old mass = 1.84533)
+binary companion: main_sequence
+parent: 0
+
+0a super_giant_to_carbon_dwarf_at_time = 1023.57 Myr (old mass = 0.757377)
+binary companion: main_sequence
+parent: 0
+
+0b main_sequence_to_hertzsprung_gap_at_time = 8497.49 Myr (old mass = 1)
+binary companion: carbon_dwarf
+parent: 0
+
+0b hertzsprung_gap_to_sub_giant_at_time = 8704.19 Myr (old mass = 0.99)
+binary companion: carbon_dwarf
+parent: 0
+
+0b sub_giant_to_horizontal_branch_at_time = 9975.48 Myr (old mass = 0.79)
+binary companion: carbon_dwarf
+parent: 0
+
+0b horizontal_branch_to_super_giant_at_time = 10056.41 Myr (old mass = 0.766959)
+binary companion: carbon_dwarf
+parent: 0
+
+0b super_giant_to_carbon_dwarf_at_time = 10057.74 Myr (old mass = 0.539083)
+binary companion: carbon_dwarf
+parent: 0
+
+3 main_sequence_to_hertzsprung_gap_at_time = 268.46 Myr (old mass = 3.00098)
+
+3 hertzsprung_gap_to_sub_giant_at_time = 274.04 Myr (old mass = 2.97097)
+
+3 sub_giant_to_horizontal_branch_at_time = 300.75 Myr (old mass = 2.97097)
+
+3 horizontal_branch_to_super_giant_at_time = 366.60 Myr (old mass = 2.85731)
+
+3 super_giant_to_carbon_dwarf_at_time = 379.81 Myr (old mass = 1.03883)
+2
+ 0 2 10464.2 2 0.378757 105710 10175 0
+ 2 1 4000 0.6
+  1
+ 12 0 0 0 0 0 0
+ 3 10464.2 10465.2 3.00098 0.727877 0.727877 0.010429 0.011408 3.57328 -4.63717 -1.28311 17.626 0 0 0
+  1
+ 12 0 0 0 0 0 0
+ 1 10464.2 10465.2 1 0.539083 0.539083 0.0127771 0.0127771 4.10908 -2.39551 -0.927249 11.666 2.12727 0 0

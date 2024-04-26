@@ -1,0 +1,917 @@
+<HTML>
+<HEAD>
+<TITLE>Toy model for SD-SE interface</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#EEFFEE" 
+      LINK="#0000CC" ALINK="#CCCCCC" VLINK="#000099">
+
+<H1>
+Toy model implementation of SE
+</H1>
+
+Piet Hut and Jun Makino,        June 30, 2002<br>
+Fortran implementation added July 1, 2002 <br>
+Some bug fixes for Fortran implementation July 2, 2002 <br>
+<p>
+Table of contents<p>
+<ul>
+<li><a href=#Description>Description</a>
+<ul>
+<p>
+</ul>
+<li><a href=#Output>Sample output from Fortran code</a>
+<li><a href=#DriverSource>Driver source code in Fortran</a>
+<li><a href=#ModelSource>Toy model source code in Fortran</a>
+<ul>
+<p>
+</ul>
+<li><a href=#OutputC++>Sample output from C++ code</a>
+<li><a href=#DriverSourceinC++>Driver source code in C++</a>
+<li><a href=#ClassSource>Toy model source code in C++</a>
+</ul>
+
+<a name=Description>
+<H2>Description</H2>
+
+<p>
+One of the goals of our workshop was to specify ways to let existing
+computer codes for stellar dynamics (SD) and for stellar evolution (SE)
+communicate with minimum modification at either end.  In fact, with a
+well-defined minimal interface between the two, SD should not care
+whether the information obtained results from running an actual SE code,
+or from a table look-up or fitting formula.  The same holds for SE:
+each side should see the other as a black box.  Soon, we will also
+discuss the role of stellar hydrodynamics (SH), but we'll leave that
+out for now, to get started.
+</p>
+<p>
+
+We  have just written a toy model version for
+the SD-SE interface, following the discussions during the workshop.
+In order to test our interface, we constructed a very simple
+implementation of both the SD and SE parts of a simulation code.
+For SD we simply took two unbound stars on a head-on collision course,
+to let them merge into a single star with an unusual composition.
+For SE we constructed the following stick-figure version.  We would
+be grateful to get reactions and suggestions from those of you who
+have more experience with SE codes.
+</p>
+
+
+<blockquote>
+    We approximate each physical quantity Q that describes the state of
+    a star (mass, radius, Y, Z) with a piece-wise linear function with
+    one discontinuity, specified by the following six numbers:
+<p>
+    <pre>
+      t_endms   time at which the star leaves the main sequence
+      t_endrg   time at which the star leaves the red giant branch.
+      f_init    value of Q at birth of star (at time t=0)
+      f_endms   value of Q at time t=t_endms
+      f_endrg   value of Q just before time t=t_endrg
+      f_remnant value of Q just after time t=t_endrg
+
+                                         ....... f_endrg
+                                        /|
+                                       / |
+                                      /  |
+                                     /   |
+     ^                              /    |
+     |                             /     |
+     Q                            /      |
+                            _____/.......|...... f_endms
+                  _____-----             |
+        _____-----.......................|...... f_init
+                                         |------ f_remnant
+        +-----------------------+--------+------ 0
+        0                       t_endms  t_endrg
+                   t -->
+</pre>
+    Note that we stick-figure version of stellar evolution mimics
+    only low-mass stars, while leaving out completely the horizontal
+    branch part of the evolution.  In addition, we will make the
+    following simplified assumption: t_endrg = 1.1 t_endms.
+    This leaves us with 17 independent values: one time scale and four
+    Q values for each of the four Q choices.  Here is what we choose,
+    starting with the three free values mass M, Y_init Y0, Z_init Z0:
+<p>
+
+<pre>    
+    t_endms = ( 10^4 / M^3 ) Myr
+
+       Q (unit)     |  Q_init  |  Q_endms  |  Q_endrg  |  Q_remnant
+    ----------------+----------+-----------+-----------+-------------
+    mass (Msun)     |    M     |     M     |   M / 2   |    M / 4
+    radius (Rsun)   |    M     |     M     |   100 M   |  0.01 / M
+    He fraction Y   |    Y0    |     Y1    |     Y2    |     Y3
+    metallicity Z   |    Z0    |     Z1    |     Z2    |     Z3
+
+    where Y1 = minimum(Y0 + 0.1 , 1 - Z1) 
+          Y2 = minimum(Y0 + 0.4 , 1 - Z2) 
+          Y3 = minimum(Y0 + 0.8 , 1 - Z3) 
+          Z1 = Z0
+          Z2 = minimum(Z0 + 0.2 , 1) 
+          Z3 = minimum(Z0 + 0.4 , 1) 
+
+</pre>    
+    The idea is to let the star lose half of its mass on the red giant
+    branch due to wind loss; and then again half of its mass in the
+    instantaneous transition to a white dwarf.  For the helium fraction Y
+    we presume that it increases by 0.1 while on the main sequence, and by
+    another amount 0.1 on the red giant branch; we then double that number
+    to get Y = Y0 + 0.4, to account for the mass lost (the newly formed
+    helium is not lost since it is in the inner regions).  After losing
+    again half the mass, the final Y is concentrated to Y = Y0 + 0.8, but
+    of course in all cases the total Y+Z cannot exceed unity, hence the
+    "minimum(,)" operators above.  For the metallicity Z we assume that
+    nothing is generated on the main sequence, and 0.1 on the red giant
+    branch.
+</blockquote>
+Does all this seem reasonable?  Are there obvious improvements that
+we could make, without making the whole toy model much more complex?
+Is anybody aware of toy models resembling this in the literature?
+<p>
+As for the interface specification, we will comment on that later.
+Below is a sample output of the output from the above model, starting
+with a time step of 1 Myr, and letting the time step double each time,
+unless the changes in mass, radius, Y, or Z became too large (this is
+something that SD could limit through the interface to SE, as we
+discussed at the workshop).  We imposed the following requirements:
+<p>
+<pre>
+  | delta mass |    < 0.1 * mass
+  | delta radius |  < radius
+  | delta Y |       < 0.1
+  | delta Z |       < 0.1
+</pre>
+
+<a name=Output>
+<H2>Sample output from Fortran code</H2>
+
+<pre>
+Output for a one-solar-mass star:
+
+Age =1.000000000     M = 1.000000000     R = 1.000000000     Y = .2500100000     Z = .2000000000E-01
+Age =3.000000000     M = 1.000000000     R = 1.000000000     Y = .2500300000     Z = .2000000000E-01
+Age =7.000000000     M = 1.000000000     R = 1.000000000     Y = .2500700000     Z = .2000000000E-01
+Age =15.00000000     M = 1.000000000     R = 1.000000000     Y = .2501500000     Z = .2000000000E-01
+Age =31.00000000     M = 1.000000000     R = 1.000000000     Y = .2503100000     Z = .2000000000E-01
+Age =63.00000000     M = 1.000000000     R = 1.000000000     Y = .2506300000     Z = .2000000000E-01
+Age =127.0000000     M = 1.000000000     R = 1.000000000     Y = .2512700000     Z = .2000000000E-01
+Age =255.0000000     M = 1.000000000     R = 1.000000000     Y = .2525500000     Z = .2000000000E-01
+Age =511.0000000     M = 1.000000000     R = 1.000000000     Y = .2551100000     Z = .2000000000E-01
+Age =1023.000000     M = 1.000000000     R = 1.000000000     Y = .2602300000     Z = .2000000000E-01
+Age =2047.000000     M = 1.000000000     R = 1.000000000     Y = .2704700000     Z = .2000000000E-01
+Age =4095.000000     M = 1.000000000     R = 1.000000000     Y = .2909500000     Z = .2000000000E-01
+Age =8191.000000     M = 1.000000000     R = 1.000000000     Y = .3319100000     Z = .2000000000E-01
+Age =10010.10098     M = .9949495117     R = 1.999996680     Y = .3530302930     Z = .2202019531E-01
+Age =10030.30293     M = .9848485352     R = 3.999990040     Y = .3590908789     Z = .2606058594E-01
+Age =10070.70684     M = .9646465820     R = 7.999976758     Y = .3712120508     Z = .3414136719E-01
+Age =10151.51465     M = .9242426758     R = 15.99995020     Y = .3954543945     Z = .5030292969E-01
+Age =10313.13027     M = .8434348633     R = 31.99989707     Y = .4439390820     Z = .8262605469E-01
+Age =10481.81719     M = .7590914062     R = 48.69990156     Y = .4945451563     Z = .1163634375    
+Age =10633.63545     M = .6831822754     R = 63.72990947     Y = .5400906348     Z = .1467270898    
+Age =10770.27188     M = .6148640625     R = 77.25691563     Y = .5810815625     Z = .1740543750    
+Age =10893.24463     M = .5533776855     R = 89.43121826     Y = .6179733887     Z = .1986489258    
+Age =10999.99990     M = .5000000488     R = 99.99999033     Y = .6499999707     Z = .2199999805    
+Age =11000.00010     M = .2500000000     R = .1000000000E-01 Y = .5800000000     Z = .4200000000    
+Age =19192.00010     M = .2500000000     R = .1000000000E-01 Y = .5800000000     Z = .4200000000    
+
+</pre>
+
+Note the at first the time step doubling was the limiting factor.
+Then during the first five steps on the red giant branch, the time step
+was constrained by the requirement to at most double the radius.
+During the next five steps the constraint was to allow a change in mass
+of not more than ten percent.  The final step was again constrained by
+time step doubling, while the two before were forced to occur at both
+sides of the discontinuity at the end of the life of the star.
+<p>
+
+<a name=DriverSource>
+<H2>Driver source code in Fortran</H2>
+
+Here is the fortran source code for testing the toy model implementation
+described above, with the header file for interface functions.
+This is not meant for distribution; it is still very rough, quickly
+cobbled together to get some results; but if you're interested to look
+under the hood at what we've done, here it is.
+<p>
+
+
+<pre>
+      subroutine print_star(idstar)
+      integer idstar
+#include "modest_star.h"
+      write(6,600) getTime(idstar),getMass(idstar),getRadius(idstar),
+     $     getY(idstar),getZ(idstar)
+ 600  format('Age =',g15.10,' M = ',g15.10,' R = ',g15.10,
+     $     ' Y = ',g15.10,' Z = ',g15.10)
+      end
+
+      program one_star
+#include "modest_star.h"      
+      integer star
+      real*8 dtmax, t
+      integer discon_reached, countdown
+      real*8 dMmax, dRmax, dYmax, dZmax, new_time
+      star =  CreateStar(1.0d0,0.25d0,0.02d0)
+      dtmax = 1d0
+      discon_reached = 0
+      t = 0
+      countdown = 3
+ 100  if (countdown .gt. 0) then
+         dMmax = 0.1d0*getMass(star)
+         dRmax = 1d0*getRadius(star)
+         dYmax = 0.1d0
+         dZmax = 0.1d0
+         new_time = EvolveStar(star,dtmax,dMmax,dRmax,dYmax,dZmax)
+         call print_star(star)
+         if ((new_time -t).gt. dtmax - 1d-10) dtmax = dtmax*2
+         t = new_time
+         if (get_discontinuity_flag(star) .ne. 0) discon_reached = 1
+         if (discon_reached .ne. 0 ) then
+            countdown  = countdown - 1
+         endif
+         goto 100
+      endif
+      end
+
+      
+        
+
+
+</pre>
+
+
+modest_star.h
+
+<pre>
+      real*8 getMass, getRadius, getY, getZ, EvolveStar
+      real*8 getTime
+      integer CreateStar, get_discontinuity_flag
+
+</pre>
+<a name=ModelSource>
+<H2>Toy model source code in Fortran</H2>
+
+Here is the Fortran source code for toy model implementation along
+with the include file for the common block.
+This too is not meant for distribution; it is still very rough, quickly
+cobbled together to get some results; but if you're interested to look
+under the hood at what we've done, here it is.
+<p>
+
+<pre>
+C------------------------------------------------------------
+C        MODEST_STAR.F
+C
+C       Piet Hut and Jun Makino
+C       Version 0.0 July 1, 2001
+C------------------------------------------------------------
+C
+C  Each physical quantity Q that describes the state of a star
+C  can be encapsulated as an object of class `stellar_quantity',
+C  where Q can stand for mass, radius, etc.  Such an object
+C  contains the full information about the evolution of Q over
+C  the life time of a star.  The value of a quantity Q at time t
+C  can be obtained by invoking its member function Q.at(t) .
+C 
+C  In our current toy-model implementation, Q(t) is described by
+C  a piece-wise linear function with one discontinuity, specified
+C  by the following six numbers:
+C 
+C    t_endms   time at which the star leaves the main sequence
+C    t_endrg   time at which the star leaves the red giant branch.
+C    f_init    value of Q at birth of star (at time t=0)
+C    f_endms   value of Q at time t=t_endms
+C    f_endrg   value of Q just before time t=t_endrg
+C    f_remnant value of Q just after time t=t_endrg
+C 
+C                                       ....... f_endrg
+C                                      /|
+C                                     / |
+C                                    /  |
+C                                   /   |
+C   ^                              /    |
+C   |                             /     |
+C   Q                            /      |
+C                          _____/.......|...... f_endms
+C                _____-----             |
+C      _____-----.......................|...... f_init
+C                                       |------ f_remnant
+C      +-----------------------+--------+------ 0
+C      0                       t_endms  t_endrg
+C                 t -->
+C 
+C  Note that we stick-figure version of stellar evolution mimics
+C  only low-mass stars, while leaving out completely the horizontal
+C  branch part of the evolution.  In addition, we will make the
+C  following simplified assumption: t_endrg = 1.1 t_endms.
+C  With no need to specify t_endrg separately, we thus are left
+C  with only five independent values.
+C
+        
+      function interpolate(t0,t1,t,f0,f1)
+      real*8 interpolate, t0,t1,t,f0,f1
+      interpolate= f0+(f1-f0)*(t-t0)/(t1-t0)
+      end
+
+      subroutine setup_stellar_quantity(idstar,idfunc,
+     $     mstime,f0,f1,f2,f3)
+      integer idstar, idfunc
+      real*8 mstime, f0,f1,f2,f3
+#include "modest_common.F"
+      ttable(1,idfunc,idstar)= mstime
+      ttable(2,idfunc,idstar)= mstime*1.1d0
+      ftable(1,idfunc,idstar)= f0
+      ftable(2,idfunc,idstar)= f1
+      ftable(3,idfunc,idstar)= f2
+      ftable(4,idfunc,idstar)= f3
+      end
+
+      function stellar_quantity(idstar,idfunc,t)
+      real*8 stellar_quantity,t, value, interpolate
+      integer idstar, idfunc
+#include "modest_common.F"
+      if (t .lt. ttable(1,idfunc,idstar)) then
+         value = interpolate(0d0, ttable(1,idfunc,idstar),
+     $        t, ftable(1,idfunc,idstar), ftable(2,idfunc,idstar))
+      elseif(t .lt. ttable(2,idfunc,idstar)) then
+         value = interpolate(ttable(1,idfunc,idstar),
+     $        ttable(2,idfunc,idstar),
+     $        t, ftable(2,idfunc,idstar), ftable(3,idfunc,idstar))
+      else
+         value = ftable(4,idfunc,idstar)
+      endif
+      stellar_quantity = value
+      end
+
+
+      
+      block data block
+#include "modest_common.F"
+      data is_used/nmax*0/
+      end
+
+      function first_unused_star()
+      integer first_unused_star
+#include "modest_common.F"
+      integer i
+      do i=1,nmax
+         if (is_used(i) .eq. 0) then
+            first_unused_star = i
+            return
+         endif
+      enddo
+      first_unused_star = -1
+      end
+      
+
+      
+
+C     FORTRAN:integer CreateStar(M, Y, Z)
+C     should be the constructor here...
+      function CreateStar(m_init, Y_init, Z_init)
+      integer CreateStar
+      integer idstar
+      integer first_unused_star
+      real*8 m_init, Y_init, Z_init
+      real*8 m,r,z0,z1,z2,z3,y0,y1,y2,y3,mstime
+#include "modest_common.F"
+      idstar = first_unused_star()
+      if (idstar .lt. 0) then
+         CreateStar= -1
+         return
+      endif
+      CreateStar=idstar
+      m = m_init
+      mstime =1d4 /(m*m*m)
+      ms_lifetime(idstar) = mstime
+      standard_timestep(idstar) = mstime*1d-5
+      call setup_stellar_quantity(idstar,1,
+     $     mstime,m,m, m*0.5D0,m*0.25d0)
+      r = m
+      call setup_stellar_quantity(idstar,2,mstime,
+     $     r,r,r*100d0,0.01d0/m)
+      z0 = Z_init
+      z1 = Z_init
+      z2 = min(1.0d0,z0+0.2d0)
+      z3 = min(1.0d0,z0+0.4d0)
+      call setup_stellar_quantity(idstar,4,mstime,z0,z1,z2,z3)
+      y0 = Y_init
+      y1 = min(y0+0.1d0,1d0-z1)
+      y2 = min(y0+0.4d0,1d0-z2)
+      y3 = min(y0+0.8d0,1d0-z3)
+      call setup_stellar_quantity(idstar,3,mstime,y0,y1,y2,y3)
+      age(idstar) = 0
+      discontinuity_flag(idstar) = 0
+      end
+      
+      function EvolveStar(idstar,dtmax,dMmax, dRmax, dYmax, dZmax)
+      real*8 EvolveStar
+      integer idstar
+      real*8 dtmax,dMmax, dRmax, dYmax, dZmax
+      real*8 old_age, last_age, max_age
+      real*8 m0,r0,y0,z0
+      integer dmax_exceeded
+      real*8 t0,t1,newt
+      real*8 stellar_quantity
+#include "modest_common.F"
+      if (discontinuity_flag(idstar) .eq. -1)then
+         discontinuity_flag(idstar) = 1
+         age(idstar) = age(idstar)
+     $        +2*discon_dt*ms_lifetime(idstar)
+         EvolveStar = age(idstar)
+         return
+      endif
+      old_age = age(idstar)
+      if (discontinuity_flag(idstar) .eq. 1) then
+         discontinuity_flag(idstar) =0
+      endif
+      m0 = stellar_quantity(idstar,1,age)
+      r0 = stellar_quantity(idstar,2,age)
+      y0 = stellar_quantity(idstar,3,age)
+      z0 = stellar_quantity(idstar,4,age)
+      last_age = age(idstar)
+      max_age = old_age + dtmax
+ 100  if (dmax_exceeded(idstar,age(idstar),old_age,
+     $     dMmax,dRmax,dYmax,dZmax)
+     $     .eq. 0 .and. age(idstar) .lt. max_age) then
+         last_age = age(idstar)
+         age(idstar) = age(idstar)+standard_timestep(idstar)
+         if (age(idstar) .gt. max_age ) age(idstar) = max_age
+         goto 100
+      endif
+      if (dmax_exceeded(idstar,age(idstar),old_age,
+     $     dMmax,dRmax,dYmax,dZmax)
+     $     .ne. 0) then
+         t0 = last_age
+         t1 = age(idstar)
+ 200     if ((t1-t0) .gt. discon_dt*ms_lifetime(idstar))then
+            newt = (t1+t0)/2.0d0
+            if(dmax_exceeded(idstar,newt,old_age,
+     $           dMmax,dRmax,dYmax,dZmax) .ne. 0) then
+               t1 = newt
+            else
+               t0 = newt
+            endif
+            goto 200
+         endif
+         if(dmax_exceeded(idstar,t1,t0,
+     $        dMmax,dRmax,dYmax,dZmax) .ne. 0) then
+            discontinuity_flag(idstar) = -1
+         endif
+         age(idstar) = t0
+      endif
+      EvolveStar = age(idstar)
+      end
+      
+      function dmax_exceeded(idstar, new_age,old_age,
+     $     dMmax,dRmax,dYmax,dZmax)
+      integer dmax_exceeded,idstar
+      real*8 stellar_quantity
+      real*8 new_age,old_age,dMmax,dRmax,dYmax,dZmax
+      if (abs(stellar_quantity(idstar,1,new_age)
+     $     -stellar_quantity(idstar,1,old_age)) .ge. dMmax .or.
+     $     abs(stellar_quantity(idstar,2,new_age)
+     $     -stellar_quantity(idstar,2,old_age)) .ge. dRmax .or.
+     $     abs(stellar_quantity(idstar,3,new_age)
+     $     -stellar_quantity(idstar,3,old_age)) .ge. dYmax .or.
+     $     abs(stellar_quantity(idstar,4,new_age)
+     $     -stellar_quantity(idstar,4,old_age)) .ge. dZmax)then
+          dmax_exceeded = 1
+       else
+          dmax_exceeded = 0
+       endif
+       end
+      function get_discontinuity_flag(idstar)
+      integer get_discontinuity_flag, idstar
+#include "modest_common.F"
+      get_discontinuity_flag = discontinuity_flag(idstar)
+      end
+      function DestroyStar(idstar)
+      integer DestroyStar
+#include "modest_common.F"
+      integer idstar
+      if (idstar .lt. 0 .or.
+     $     idstar .gt. nmax) then
+         DestroyStar = -1
+      else
+         if (is_used(idstar) .eq. 0) then
+            DestroyStar = -1
+         else
+            DestroyStar = idstar
+            is_used(idstar) = 0
+         endif
+      endif
+      end
+
+      function getMass(idstar)
+      real*8 getMass
+      integer idstar
+#include "modest_common.F"
+      real*8 stellar_quantity
+      getMass = stellar_quantity(idstar,1,age(idstar))
+      end
+      
+      function getRadius(idstar)
+      real*8 getRadius
+      integer idstar
+#include "modest_common.F"
+      real*8 stellar_quantity
+      getRadius = stellar_quantity(idstar,2,age(idstar))
+      end
+      
+      function getTime(idstar)
+      real*8 getTime
+      integer idstar
+#include "modest_common.F"
+      getTime = age(idstar)
+      end
+      
+      function getY(idstar)
+      real*8 getY
+      integer idstar
+#include "modest_common.F"
+      real*8 stellar_quantity
+      getY = stellar_quantity(idstar,3,age(idstar))
+      end
+      
+      
+      function getZ(idstar)
+      real*8 getZ
+      integer idstar
+#include "modest_common.F"
+      real*8 stellar_quantity
+      getZ = stellar_quantity(idstar,4,age(idstar))
+      end
+      
+
+</pre>
+
+modest_common.F
+
+<pre>
+
+C------------------------------------------------------------
+C	MODEST_INC.F
+C
+C       Piet Hut and Jun Makino
+C       Version 0.0 July 1, 2001
+C------------------------------------------------------------
+C      
+      integer nmax
+      parameter (nmax = 100000)
+      integer nfmax
+      parameter (nfmax = 4)
+      real*8 discon_dt
+      parameter (discon_dt = 1d-8)
+      real*8 ftable(4,nfmax,nmax), ttable(2,nfmax,nmax)
+      real*8 ms_lifetime(nmax)
+      real*8 standard_timestep(nmax)
+      real*8 discontinuity_time(nmax)
+      integer  discontinuity_flag(nmax)
+      integer  is_used(nmax)
+      real*8 age(nmax)
+
+      common /modest/ftable,ttable,ms_lifetime,standard_timestep,
+     $   discontinuity_time, discontinuity_flag, age
+
+      
+</pre>
+
+      
+
+<a name=OutputC++>
+<H2>Sample output from C++ code</H2>
+
+<pre>
+Output for a one-solar-mass star:
+
+ Age = 1            M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 3            M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 7            M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 15           M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 31           M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 63           M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 127          M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 255          M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 511          M = 1            R = 1            Y = 0.25   Z = 0.02
+ Age = 1023         M = 1            R = 1            Y = 0.26   Z = 0.02
+ Age = 2047         M = 1            R = 1            Y = 0.27   Z = 0.02
+ Age = 4095         M = 1            R = 1            Y = 0.29   Z = 0.02
+ Age = 8191         M = 1            R = 1            Y = 0.33   Z = 0.02
+ Age = 10010.1010   M = 0.99494951   R = 1.99999668   Y = 0.35   Z = 0.02
+ Age = 10030.3029   M = 0.98484854   R = 3.99999004   Y = 0.35   Z = 0.02
+ Age = 10070.7068   M = 0.96464658   R = 7.99997676   Y = 0.37   Z = 0.03
+ Age = 10151.5146   M = 0.92424268   R = 15.9999502   Y = 0.39   Z = 0.05
+ Age = 10313.1303   M = 0.84343486   R = 31.9998971   Y = 0.44   Z = 0.08
+ Age = 10481.8172   M = 0.75909141   R = 48.6999016   Y = 0.49   Z = 0.11
+ Age = 10633.6354   M = 0.68318228   R = 63.7299095   Y = 0.54   Z = 0.14
+ Age = 10770.2719   M = 0.61486406   R = 77.2569156   Y = 0.58   Z = 0.17
+ Age = 10893.2446   M = 0.55337769   R = 89.4312183   Y = 0.61   Z = 0.19
+ Age = 10999.9999   M = 0.50000005   R = 99.9999903   Y = 0.64   Z = 0.21
+ Age = 11000.0001   M = 0.25         R = 0.01         Y = 0.58   Z = 0.42
+ Age = 19192.0001   M = 0.25         R = 0.01         Y = 0.58   Z = 0.42
+</pre>
+
+Note the at first the time step doubling was the limiting factor.
+Then during the first five steps on the red giant branch, the time step
+was constrained by the requirement to at most double the radius.
+During the next five steps the constraint was to allow a change in mass
+of not more than ten percent.  The final step was again constrained by
+time step doubling, while the two before were forced to occur at both
+sides of the discontinuity at the end of the life of the star.
+<p>
+
+<a name=DriverSourceinC++>
+<H2>Driver source code in C++</H2>
+
+Here is the C++ source code for testing the toy model implementation
+described above.
+This is not meant for distribution; it is still very rough, quickly
+cobbled together to get some results; but if you're interested to look
+under the hood at what we've done, here it is.
+<p>
+
+<pre>
+
+#include  &lt;iostream>
+#include  &lt;cmath>
+#include  &lt;cstdlib>
+#include  "modest_star.H"
+using namespace std;
+
+void print_star(modest_star star)
+{
+    cout.precision(10);
+    cout &lt;&lt; " Age = " &lt;&lt; star.getTime()
+	 &lt;&lt; " M = " &lt;&lt; star.getMass()
+	 &lt;&lt; " R = " &lt;&lt; star.getRadius()
+	 &lt;&lt; " Y = " &lt;&lt; star.getY()
+	 &lt;&lt; " Z = " &lt;&lt; star.getZ() &lt;&lt; endl;
+}
+
+
+
+int main()
+{
+    modest_star star = modest_star(1,0.25,0.02);
+    double dtmax = 1;
+    int discon_reached = 0;
+    double t = 0;
+    int countdown = 3;
+    while(countdown>0){
+	double dMmax = 0.1*star.getMass();
+	double dRmax = 1*star.getRadius();
+	double dYmax = 0.1;
+	double dZmax = 0.1;
+	double new_time = star.EvolveStar(dtmax,dMmax,dRmax,dYmax,dZmax);
+	print_star(star);
+	if ((new_time -t)> dtmax - 1e-10) dtmax *= 2;
+	t = new_time;
+	if (star.get_discontinuity_flag()) discon_reached = 1;
+	if (discon_reached)countdown --;
+    }
+}
+
+      
+	
+
+</pre>
+
+<a name=ClassSource>
+<H2>Toy model source code in C++(modest_star.H)</H2>
+
+Here is the C++ source code for toy model implementation (as a header
+file containing class definitions).
+This too is not meant for distribution; it is still very rough, quickly
+cobbled together to get some results; but if you're interested to look
+under the hood at what we've done, here it is.
+<p>
+
+<pre>
+//
+// Each physical quantity Q that describes the state of a star
+// can be encapsulated as an object of class `stellar_quantity',
+// where Q can stand for mass, radius, etc.  Such an object
+// contains the full information about the evolution of Q over
+// the life time of a star.  The value of a quantity Q at time t
+// can be obtained by invoking its member function Q.at(t) .
+//
+// In our current toy-model implementation, Q(t) is described by
+// a piece-wise linear function with one discontinuity, specified
+// by the following six numbers:
+//
+//   t_endms   time at which the star leaves the main sequence
+//   t_endrg   time at which the star leaves the red giant branch.
+//   f_init    value of Q at birth of star (at time t=0)
+//   f_endms   value of Q at time t=t_endms
+//   f_endrg   value of Q just before time t=t_endrg
+//   f_remnant value of Q just after time t=t_endrg
+//
+//                                      ....... f_endrg
+//                                     /|
+//                                    / |
+//                                   /  |
+//                                  /   |
+//  ^                              /    |
+//  |                             /     |
+//  Q                            /      |
+//                         _____/.......|...... f_endms
+//               _____-----             |
+//     _____-----.......................|...... f_init
+//                                      |------ f_remnant
+//     +-----------------------+--------+------ 0
+//     0                       t_endms  t_endrg
+//                t -->
+//
+// Note that we stick-figure version of stellar evolution mimics
+// only low-mass stars, while leaving out completely the horizontal
+// branch part of the evolution.  In addition, we will make the
+// following simplified assumption: t_endrg = 1.1 t_endms.
+// With no need to specify t_endrg separately, we thus are left
+// with only five independent values.
+
+class stellar_quantity
+{
+private:
+    double t_endms, t_endrg;
+    double f_init, f_endms, f_endrg, f_remnant;
+    double interpolate(double t0,
+		       double t1,
+		       double t,
+		       double f0,
+		       double f1)
+    {
+	return f0+(f1-f0)*(t-t0)/(t1-t0);
+    }
+public:
+    stellar_quantity(double ms_lifetime=0,
+			      double f0=0,
+				   double f1=0,
+				   double f2=0,
+				   double f3=0)
+    {
+	t_endms = ms_lifetime;
+	t_endrg = ms_lifetime*1.1;
+	f_init = f0;
+	f_endms = f1;
+	f_endrg = f2;
+	f_remnant = f3;
+    }
+    double at(double t)
+    {
+	if (t &lt; t_endms)
+	    return interpolate(0.0,    t_endms, t, f_init, f_endms);
+	if (t &lt; t_endrg)
+	    return interpolate(t_endms,t_endrg, t, f_endms,f_endrg);
+	return f_remnant;
+    }
+    double discontinuity_time()
+    {
+	return t_endrg;
+    }
+};
+
+double discon_dt = 1e-8;
+
+class modest_star
+{
+private:
+    stellar_quantity mass, radius, Y, Z;
+    double ms_lifetime;
+    double discontinuity_time;
+    int  discontinuity_flag; // Should be enum...
+                             // for now, -1= just before discontinuity
+                             //          +1= just after  discontinuity
+                             //           0= no discontinuity
+    double age;
+    double standard_timestep;
+    double m0,r0,y0,z0,dmmax,drmax,dymax,dzmax;
+    int dmax_exceeded(double age)
+    {
+	return ( (fabs(mass.at(age)-m0)>=dmmax)||
+		 (fabs(radius.at(age)-r0)>=drmax)||
+		 (fabs(Y.at(age)-y0)>=dymax)||
+		 (fabs(Z.at(age)-z0)>=dzmax));
+    }
+
+public:
+    //      FORTRAN:integer CreateStar(M, Y, Z)
+    //      should be the constructor here...
+    modest_star(double m_init, double Y_init, double Z_init){
+	double m = m_init;
+	ms_lifetime = 1e4 /(m*m*m);
+	standard_timestep = ms_lifetime*1e-5;
+	mass = stellar_quantity(ms_lifetime,m,m, m*0.5,m*0.25);
+	double r = m;// simple linear mass-radius relation
+                             //  in Msol-Rsol units
+	radius = stellar_quantity(ms_lifetime,r,r,r*100,0.01/m);
+	double z0 = Z_init;
+	double z1 = Z_init;
+	double z2 = fmin(1,z0+0.2);
+	double z3 = fmin(1,z0+0.4);
+	Z = stellar_quantity(ms_lifetime,z0,z1,z2,z3);
+	double y0 = Y_init;
+	double y1 = fmin(y0+0.1,1-z1);
+	double y2 = fmin(y0+0.4,1-z2);
+	double y3 = fmin(y0+0.8,1-z3);
+	Y = stellar_quantity(ms_lifetime,y0,y1,y2,y3);
+	age = 0;
+	discontinuity_flag = 0;
+    }
+    //      FORTRAN:real*8 EvolveStar(id, dtmax, dMmax, dRmax, dYmax, dZmax)
+    //
+    // Sample implementation for checking dMmax etc.
+    // return time to the accuracy of discon_dt
+
+    double  EvolveStar(double dtmax,
+		       double dMmax,
+		       double dRmax,
+		       double dYmax,
+		       double dZmax )
+    {
+	if (discontinuity_flag == -1){
+	    discontinuity_flag = 1;
+	    age += 2*discon_dt*ms_lifetime;
+	    return age;
+	}
+	double old_age = age;
+	if (discontinuity_flag == 1)discontinuity_flag =0;
+	m0 = mass.at(age);
+	r0 = radius.at(age);
+	y0 = Y.at(age);
+	z0 = Z.at(age);
+	dmmax = dMmax;
+	drmax = dRmax;
+	dymax = dYmax;
+	dzmax = dZmax;
+	double last_age = age;
+        double max_age = old_age + dtmax;
+	while((!dmax_exceeded(age))
+	      &&(age &lt; max_age)) {
+	    last_age = age;
+	    age += standard_timestep;
+	    if (age  > max_age ) age = max_age;
+	}
+	if (dmax_exceeded(age)){
+	    double t0 = last_age;
+	    double t1 = age;
+	    while ((t1-t0)>discon_dt*ms_lifetime){
+		double newt = (t1+t0)/2;
+		if(dmax_exceeded(newt)){
+		    t1 = newt;
+		}else{
+		    t0 = newt;
+		}
+	    }
+	    if(fabs(mass.at(t1)-mass.at(t0))>dMmax ||
+	       fabs(radius.at(t1)-radius.at(t0))>dRmax ||
+	       fabs(Y.at(t1)-Y.at(t0))>dYmax ||
+	       fabs(Z.at(t1)-Z.at(t0))>dZmax ){
+		discontinuity_flag = -1;
+	    }
+	    age = t0;
+	    
+	}
+	return age;
+    }
+    int get_discontinuity_flag()
+    {
+	return discontinuity_flag;
+    }
+    
+    //      integer DestroyStar(id)   --- replaced by default destructor
+    
+    //     real*8 getMass(id)
+    double getMass()
+    {
+	return mass.at(age);
+    }
+	
+    //      real*8 getRadius(id)
+    double getRadius()
+    {
+	return radius.at(age);
+    }
+    //      real*8 getTime(id)
+    double getTime()
+    {
+	return age;
+    }
+    //      real*8 getY(id)
+    double getY()
+    {
+	return Y.at(age);
+    }
+    //      real*8 getZ(id)
+    double getZ()
+    {
+	return Z.at(age);
+    }
+};
+</pre>
+</BODY>
+</HTML>

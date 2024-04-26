@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+        
+  <meta http-equiv="Content-Type" content="text/html;
+   charset=iso-8859-1">
+  <title>McScatter</title>
+             
+  <meta name="description" content="Scatter with evolution">
+</head>
+ <body bgcolor="#ffffff" text="#000000" link="#0085c0" vlink="#800080" alink="#0085c0">
+
+<blockquote>     
+      
+  <table border="0" width="100%">
+   <tbody>
+      <tr>
+   <td align="Left" bgcolor="#52799e"><img src="./images/right_triangle.png" alt="&gt;" border="0" height="14" width="15">
+        <b><font face="Helvetica, Arial"><font color="#ffffff"><font size="+1">
+  Reader for McScatter</font></font></font></b></td>
+   </tr>
+         
+    </tbody>    
+  </table>
+   Educational program for integrating SeBa binary evolution with
+   simple stellar dynamics.  The dynamics is based on binary
+   scattering in a multi-mass field of stars with uniform density and
+   velocity dispersion, using the scattering cross section of Giersz
+   (<a
+   href="http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=2001MNRAS.324..218G&amp;db_key=AST&amp;high=3d6b605f5f05155">MNRAS,
+   2001, 324, 218-30</a>).  <p> </p>
+   
+<p>A paper describing the package in detail can be found <a
+href=McScatter_HPZH.pdf>here</a>.
+       
+<p>Download the entire source code of <a
+href="../manybody/McScatter.tar.gz"> McScatter.tar.gz</a>
+
+<p></p>
+
+  McScatter.tar.gz contains the following files:    
+    <table valign="Top" border="2">
+  <tbody>
+         <tr>
+           <td valign="Top">          README		 </td>
+           <td valign="Top">This file </td>
+         </tr>
+         <tr>
+           <td valign="Top">          Makefile	 </td>
+           <td valign="Top">Makefile (based on starlab distribution 4.1.1 
+or earlier) </td>
+         </tr>
+         <tr>
+           <td valign="Top">          McScatter.f	 </td>
+           <td valign="Top">Monte-Carlo driver for performing scattering experiments
+		 between a (pre-determined) binary and a population 		 of single star (selected
+randomly from an IMF). 		 includes binary evolution from SeBa
+           (<a href="http://adsabs.harvard.edu/cgi-bin/nph-bib_query?bibcode=1996A%26A...309..179P&db_key=AST&high=3d6b605f5f05802">Portegies
+Zwart 		 &amp; Verbunt, 1996, A&amp;A 309, 179</a>). </td>
+         </tr>
+         <tr>
+           <td valign="Top">          evolveSS.f	 </td>
+           <td valign="Top">Single star evolution from SeBa without scattering.
+           </td>
+         </tr>
+         <tr>
+           <td valign="Top">          evolveBS.f	 </td>
+           <td valign="Top">Binary star evolution from SeBa without scattering.
+           </td>
+         </tr>
+         <tr>
+           <td valign="Top">          interface_SeBa.h </td>
+           <td valign="Top">Header file for SeBa interface.</td>
+         </tr>
+         <tr>
+           <td valign="Top">          interface_SeBa.C </td>
+           <td valign="Top">Single star and binary star evolution interface.
+ 		 requires starlab version 4.1.1 to compile. </td>
+         </tr>
+         <tr>
+           <td valign="Top">          ran2.C		 </td>
+           <td valign="Top">Numerical Recipes (Press et al.) random number 
+ 		 generator </td>
+         </tr>
+         <tr>
+           <td valign="Top">          example.in     </td>
+           <td valign="Top">example input file for McScatter </td>
+         </tr>
+         <tr>
+           <td valign="Top">          example.log	 </td>
+           <td valign="Top">example log file for McScatter </td>
+         </tr>
+         <tr>
+           <td valign="Top">          example.out    </td>
+           <td valign="Top">example output file for McScatter            
+              </td>
+         </tr>
+         <tr>
+           <td valign="Top">          SeBa.data    </td>
+           <td valign="Top">Diagnostic output from SeBa. This file is
+           further processed with <a
+           href=http://www.manybody.org/cgi-bin/starlab/binary_demo.pl>roche<a>.
+           The output if this exercise is listen in the table below
+           (roche.log, SeBa_xxxx.gif and SeBa_xxxx.txt). 
+              </td>
+         </tr>
+         <tr>
+           <td valign="Top">          binev.data    </td>
+           <td valign="Top">Diagnostic output from SeBa.
+              </td>
+         </tr>
+         <tr>
+           <td valign="Top">          McScatter.txt    </td>
+           <td valign="Top">Text version of manybody.org/McScatter html page.
+              </td>
+         </tr>
+
+      </tbody>     
+    </table>
+ <br>
+  Typical command line (generates : McScatter.out and McScatter.log)  <br>
+<b>%</b> (McScatter &lt; McScatter.in &gt; McScatter.out )&gt;&amp; McScatter.log
+
+<br>
+<br>
+Further processing of the data file <em>SeBa.data</em>. Typical
+command line (generates : roche.log, SeBa_xxxx.gif and SeBa_xxxx.txt)<br>
+<b>%</b> (roche &lt; SeBa.data &gt; )&gt;&amp; roche.log
+<br>
+<br>
+
+<table valign="Top" border="2">
+  <tbody>
+         <tr>
+           <td valign="Top">          roche.log		 </td>
+           <td valign="Top">log file from <a
+           href="http://carol.wins.uva.nl/~spz/act/roche/roche.html">roche</a>.</td>
+         </tr>
+         <tr>
+           <td valign="Top">          SeBa_0001.gif		 </td>
+           <td valign="Top">Output gif file from roche, representing
+           an image of the binary system.
+	   Subsequent files (SeBa_0003.gif, SeBa_0004.gif, 
+	   SeBa_0006.gif---SeBa_0009.gif
+           and SeBa_0011.gif---SeBa_0014.gif) show later evolutionary
+           stages of the same binary.
+	   </td>
+         </tr>
+         <tr>
+           <td valign="Top">          SeBa_0002.txt		 </td>
+           <td valign="Top">Output text file from roche, summarizes
+           the scattering encounters experienced by the binary.
+	   Subsequent files (SeBa_0005.txt and SeBa_0010.txt) contain
+           information about subsequent McScatter events. 
+	   </td>
+         </tr>
+      </tbody>     
+    </table>
+
+<br>
+<br>
+For more information see: <a
+href=http://www.manybody.org>http://www.manybody.org</a>
+<br>
+<br>
+<br>
+27 January 2006<br>
+Douglas C. Heggie<br>
+Simon F. Portegies Zwart<br>
+Jarrod R. Hurley<br>
+<br>
+Version log:
+<br>Version 1.1: <font size="-1">Extended for use with <em>roche</em>
+by SPZ on 23 April 2003</font>
+<br>Version 2: <font size="-1">Integrated with BSE by SPZ and JH on 22
+January 2006</font>
+
+</blockquote>
+       
+</body>
+</html>
+
+

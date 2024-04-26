@@ -1,0 +1,72 @@
+ Initial binary:
+ status at time =       0.0000
+detached (main_sequence, main_sequence)
+ M =   2.00000000 R =    1.61021039
+ m =   1.00000000 r =    0.88824945
+ a =      4000.0000 e =   0.600 v =      0.0
+ #ma =   0.35136878
+ status at time =    1166.6010
+detached (hertzsprung_gap, main_sequence)
+ M =   1.99996778 R =    4.05169652
+ m =   1.00000000 r =    0.90795483
+ a =      4000.0430 e =   0.600 v =      0.0
+ status at time =    1174.1763
+detached (giant_branch, main_sequence)
+ M =   1.99987402 R =    5.93683114
+ m =   1.00000000 r =    0.90808783
+ a =      4000.1680 e =   0.600 v =      0.0
+ status at time =    1196.9006
+detached (core_helium, main_sequence)
+ M =   1.99762885 R =    8.78687967
+ m =   1.00000020 r =    0.90848756
+ a =      4003.1615 e =   0.600 v =      0.0
+ status at time =    1489.3643
+detached (first_agb, main_sequence)
+ M =   1.97469207 R =   20.39772889
+ m =   1.00000121 r =    0.91370857
+ a =      4034.0184 e =   0.600 v =      0.0
+ status at time =    1494.3931
+detached (second_agb, main_sequence)
+ M =   1.90558359 R =  226.30646437
+ m =   1.00039686 r =    0.91422555
+ a =      4108.1829 e =   0.598 v =      0.0
+ status at time =    1496.8923
+detached (main_sequence, co_white_dwarf)
+ M =   0.63629642 R =    0.01229796
+ m =   1.04008559 r =    0.95934190
+ a =      5992.7656 e =   0.549 v =      0.0
+ status at time =    9680.0610
+detached (hertzsprung_gap, co_white_dwarf)
+ M =   0.63629642 R =    0.01229796
+ m =   1.04008539 r =    1.70046958
+ a =      5992.7663 e =   0.549 v =      0.0
+ status at time =   10179.2781
+detached (giant_branch, co_white_dwarf)
+ M =   0.63629642 R =    0.01229796
+ m =   1.03959479 r =    2.27425226
+ a =      5994.5206 e =   0.549 v =      0.0
+ status at time =   10875.1496
+detached (core_helium, co_white_dwarf)
+ M =   0.63669374 R =    0.01229280
+ m =   0.81852752 r =   11.05634320
+ a =      6892.5934 e =   0.549 v =      0.0
+ status at time =   11006.0068
+detached (first_agb, co_white_dwarf)
+ M =   0.63669574 R =    0.01229278
+ m =   0.77887009 r =   27.47503264
+ a =      7085.7052 e =   0.549 v =      0.0
+ status at time =   11010.1853
+detached (co_white_dwarf, co_white_dwarf)
+ M =   0.63851845 R =    0.01226915
+ m =   0.52084521 r =    0.01390603
+ a =      8593.7936 e =   0.547 v =      0.0
+  12000.3084  8593.79364  3.68869635
+ Program terminated normally
+ Final binary:
+ status at time =   12000.3084
+detached (co_white_dwarf, co_white_dwarf)
+ M =   0.63851845 R =    0.01226915
+ m =   0.52084521 r =    0.01390603
+ a =      8593.7936 e =   0.547 v =      0.0
+ scatter_counter =  0
+ evolve_counter =  5309

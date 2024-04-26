@@ -1,0 +1,50 @@
+<HTML>
+
+<TITLE>
+				NEMO SUMMARY
+</TITLE>
+<BODY bgcolor=#f7dfb2>
+<!--#include virtual="nemofooter2.inc" -->
+<hr>
+<CENTER> <H1>
+				NEMO SUMMARY
+</H1> </CENTER>
+
+
+<H3> EXAMPLES </H3>
+
+Once the <B>NEMO</B> environment has been loaded in your shell, you
+will have access to over 200 new commands. Here is an example
+to create a bar and look at the velocity field:
+<PRE>
+    mkexpdisk out=run0.01 nbody=10000
+    hackcode1 in=run0.01 out=run0.02 options=mass,phi,acc tstop=5 > run0.2.log
+    snaptrim run0.02 -  times=5 |\
+        snaprect - run0.13 weight="-phi*phi*phi"    
+    snaprotate run0.13 run0.20 "atand(tand(30)/cosd(60)),60,45" zyz
+    snapgrid run0.20 run0.21 nx=256 ny=256 moment=0
+    snapgrid run0.20 run0.22 nx=256 ny=256 moment=1
+    ccdsmooth run0.21 run0.21s gauss=0.1
+    ccdsmooth run0.22 run0.22s gauss=0.1
+    ccdmath run0.21s,run0.22s run0.20d %1
+    ccdmath run0.21s,run0.22s run0.20v "%2/%1"
+</PRE>
+
+Here's an example to look at a radial profile of densities of an
+N=1000 Plummer sphere,
+but using Unix pipes. No data is ever saved here. 
+<PRE>
+  mkplummer - 1000 | radprof - tab=t | tabmath - - 'log(%1),log(%2)' all | tabplot -
+</PRE>
+
+<!--#include virtual="nemofooter2.inc" -->
+
+<BR><FONT SIZE=-2>Page last modified:
+<!--#echo var="LAST_MODIFIED" -->.
+<!--#config timefmt="%d-%h-%Y" -->
+</FONT>
+
+
+</BODY>
+
+</HTML>

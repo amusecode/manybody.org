@@ -1,0 +1,91 @@
+Donald Savage
+Headquarters, Washington       Jan. 10, 2003
+(Phone: 202/358-1547)
+
+RELEASE: 03-009
+
+RESEARCHERS SEEK "HEART" OF BLACK HOLE MYSTERY
+
+     New research, funded by NASA and the University of 
+Tokyo, has shown astronomers may not yet have uncovered the 
+mystery at the heart of one of the Galaxy's oldest star 
+systems, the globular cluster M15.
+
+In September, observations made using NASA's Hubble Space 
+Telescope (HST) seemed to indicate the presence of a mid-size 
+black hole, several thousand times more massive than the Sun, 
+in the hearts of two clusters of stars. The observations were 
+the foundation for a claim that intermediate-mass black holes 
+had at last been discovered. By comparison, stellar-mass 
+black holes are only a few times the mass of our Sun. 
+Galactic-center black holes are millions or even billions of 
+times more massive than our Sun.
+
+New detailed computer simulations, published in the 
+Astrophysical Journal, show a different way to interpret the 
+same data. Instead of a new mid-size black hole of unknown 
+origin in M15, the Hubble data have a more mundane 
+explanation - a dense clump of stellar remnants, the products 
+of normal stellar evolution, in the cluster's core. The 
+cluster may contain a small black hole or maybe none at all. 
+The simulations did not address the other star cluster, 
+called G1, in which evidence for an intermediate-mass black 
+hole was reported at around the same time as the M15 results 
+were released.
+
+The question of what lurks at the center of M15 has kept 
+astronomers busy for at least two decades. At various times, 
+claims have been made that M15 must harbor a central black 
+hole. The claims were based on the high density of stars in 
+the cluster's congested core and on other tantalizing hints. 
+Hints like stars near the center seemed to be orbiting faster 
+than would be expected if only their own gravity were binding 
+them to the cluster. This would be the telltale gravitational 
+signature of an unseen mass hiding in M15's core.
+
+A team of astronomers used the HST for several years to probe 
+M15's secrets. A few months ago, the answer to the decades-
+long question of the possible black hole in M15 seemed to be 
+at hand. After a painstaking analysis of HST data, using 
+earlier model calculations by Indiana University researchers, 
+the team reported evidence for a central black hole.
+
+Within hours of the team's announcement, astronomers around 
+the world were carefully studying the paper and its exciting 
+conclusions, which were also rather surprising, since the 
+Indiana group had previously published models that produced 
+high velocities near the center of M15 without the need for a 
+black hole.
+
+An international group of researchers, using the world's 
+fastest computer, the GRAPE-6 system in Japan, were engaged 
+in a series of simulations of star clusters that resembled 
+M15. They used the GRAPE-6 to perform independent tests of 
+the M15 black hole claim. The GRAPE's detailed, star-by-star 
+simulations represent the state of the art in cluster 
+modeling. Using this unique tool, the team found they could 
+reproduce the M15 observations without the need for a central 
+black hole. The GRAPE team's members are Jun Makino and 
+Holger Baumgardt, of Tokyo University; Piet Hut, of the 
+Institute for Advanced Study in Princeton, N.J.; Steve 
+McMillan, from Drexel University in Philadelphia; and Simon 
+Zwart, from the University of Amsterdam in the Netherlands.
+
+When the GRAPE researchers notified the HST team of their 
+results, they learned the Hubble team, along with members of 
+the Indiana University group, had reached a similar 
+conclusion. All three groups agreed that a black hole, if 
+present, had to be significantly smaller than originally 
+reported. One of the figures in the original paper, published 
+by the Indiana group, had been labeled incorrectly, throwing 
+off the later analysis of the Hubble observations.
+
+The GRAPE group's results appear in the Jan. 1, 2003, issue 
+of the Astrophysical Journal. The amended Hubble results are 
+in January's Astronomical Journal. An addendum to the earlier 
+paper by the Indiana group will appear in the March 1, 2003, 
+issue of the Astrophysical Journal.
+
+-end-
+
+

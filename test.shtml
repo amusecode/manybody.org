@@ -1,0 +1,3 @@
+<html>
+<p><!--#echo var="DATE_LOCAL" --> </p>
+</html>

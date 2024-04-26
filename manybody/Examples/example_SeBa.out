@@ -1,0 +1,59 @@
+ Initial binary:
+status at time = 0
+detached (main_sequence, main_sequence)
+M = 2	 R = 1.48674
+m = 1	 r = 0.931859
+a = 4000	 e = 0.6	 v = 0
+ #ma =   0.35136878
+status at time = 850.962
+detached (sub_giant, main_sequence)
+M = 1.97999	 R = 5.80971
+m = 1	 r = 0.950518
+a = 4026.86	 e = 0.6	 v = 0
+status at time = 936.538
+detached (sub_giant, main_sequence)
+M = 1.92027	 R = 68.9375
+m = 1	 r = 0.952505
+a = 4109.22	 e = 0.6	 v = 0
+status at time = 1031.3
+detached (main_sequence, carbon_dwarf)
+M = 1	 R = 0.954737
+m = 0.640284	 r = 0.0130812
+a = 7315.81	 e = 0.6	 v = 0
+status at time = 9312.8
+detached (sub_giant, carbon_dwarf)
+M = 0.988664	 R = 2.82594
+m = 0.640284	 r = 0.0122221
+a = 7366.72	 e = 0.6	 v = 0
+status at time = 10245.7
+detached (carbon_dwarf, carbon_dwarf)
+M = 0.640284	 R = 0.0121848
+m = 0.539083	 r = 0.0127957
+a = 10175	 e = 0.6	 v = 0
+ #max encounter rate/Myr   0.62601288
+ #encounter rate/Myr for average mass   0.00456424436
+  0.640283548  0.539082703  0.727876916
+ Warning: exchange probability too large (old p=  0.456729617  0.560605313)
+ exchange lowest id star
+
+ Strong encounter at time =  10464.1817
+ between the binary: (next binary update at t=  1000.)
+status at time = 10464.2
+detached (carbon_dwarf, carbon_dwarf)
+M = 0.727877	 R = 0.011408
+m = 0.539083	 r = 0.0127771
+a = 10175	 e = 0.378757	 v = 0
+ and the single star:
+carbon_dwarf (12),  mass =   42.2647033 radius =   0.0114080192
+ Post encounter parameters: a=  10174.9562, e=  0.378757017, Eb=  3.67583915
+
+  12000.0958  10174.9562  3.67583915
+ Program terminated normally
+ Final binary:
+status at time = 11511.7
+detached (carbon_dwarf, carbon_dwarf)
+M = 0.727877	 R = 0.0104008
+m = 0.539083	 r = 0.0126927
+a = 10175	 e = 0.378757	 v = 0
+ scatter_counter =  1
+ evolve_counter =  6460
