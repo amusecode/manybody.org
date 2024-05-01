@@ -1,1 +1,0 @@
-/usr/share/mediawiki/img_auth.php
