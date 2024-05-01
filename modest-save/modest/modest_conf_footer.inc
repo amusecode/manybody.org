@@ -1,1 +1,0 @@
-../modest_conf_footer.inc
